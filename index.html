@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simple Calculator</title>
+  <style>
+    /* Basic CSS styling */
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f0f0f0;
+      margin: 0;
+    }
+    .calculator {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 280px;
+    }
+    #display {
+      width: calc(100% - 20px);
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 1.5em;
+      text-align: right;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      user-select: none;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #e0e0e0;
+      transition: background-color 0.2s ease;
+      user-select: none;
+    }
+    button:hover {
+      background-color: #ccc;
+    }
+    button.operator {
+      background-color: #f7923b;
+      color: white;
+    }
+    button.operator:hover {
+      background-color: #d67d2e;
+    }
+    button.clear {
+      background-color: #dc3545;
+      color: white;
+    }
+    button.clear:hover {
+      background-color: #b02a37;
+    }
+    button.equals {
+      background-color: #28a745;
+      color: white;
+      grid-column: span 4;
+    }
+    button.equals:hover {
+      background-color: #1e7e34;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator">
+    <input type="text" id="display" readonly />
+    <div class="buttons">
+      <button onclick="appendValue('7')">7</button>
+      <button onclick="appendValue('8')">8</button>
+      <button onclick="appendValue('9')">9</button>
+      <button class="operator" onclick="appendValue('/')">/</button>
+
+      <button onclick="appendValue('4')">4</button>
+      <button onclick="appendValue('5')">5</button>
+      <button onclick="appendValue('6')">6</button>
+      <button class="operator" onclick="appendValue('*')">*</button>
+
+      <button onclick="appendValue('1')">1</button>
+      <button onclick="appendValue('2')">2</button>
+      <button onclick="appendValue('3')">3</button>
+      <button class="operator" onclick="appendValue('-')">-</button>
+
+      <button onclick="appendValue('0')">0</button>
+      <button onclick="appendValue('.')">.</button>
+      <button class="clear" onclick="clearDisplay()">C</button>
+      <button class="operator" onclick="appendValue('+')">+</button>
+
+      <button class="equals" onclick="calculateResult()">=</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+
+    function appendValue(value) {
+      // Prevent two operators in a row or multiple dots in a number
+      const operators = ['+', '-', '*', '/'];
+      const lastChar = display.value.slice(-1);
+
+      if (value === '.') {
+        // Prevent multiple decimals in current number segment
+        const parts = display.value.split(/[\+\-\*\/]/);
+        if (parts[parts.length - 1].includes('.')) {
+          return; // Ignore extra dot
+        }
+      }
+
+      if (operators.includes(value)) {
+        // Prevent operator if last char is operator or empty
+        if (display.value === '' || operators.includes(lastChar)) {
+          return;
+        }
+      }
+
+      display.value += value;
+    }
+
+    function clearDisplay() {
+      display.value = '';
+    }
+
+    function calculateResult() {
+      try {
+        // Evaluate expression safely by restricting characters
+        if (/[^0-9+\-*/.]/.test(display.value)) {
+          display.value = 'Error';
+          return;
+        }
+        // Prevent expression ending with operator
+        const lastChar = display.value.slice(-1);
+        if (['+', '-', '*', '/'].includes(lastChar)) {
+          display.value = 'Error';
+          return;
+        }
+        const result = eval(display.value);
+        display.value = result;
+      } catch {
+        display.value = 'Error';
+      }
+    }
+  </script>
+
+</body>
+</html>
